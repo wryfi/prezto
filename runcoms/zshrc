@@ -4,6 +4,14 @@ if [[ -s "$HOME/src/github.com/wryfi/prezto/init.zsh" ]]; then
 fi
 
 
+# source additional rc files first so they don't shadow our fns/aliases
+
+if [[ -d "${ZDOTDIR}/rc.d" ]]; then
+  for file in $(find "${ZDOTDIR}/rc.d" -not -type d | sort); do . "$file"; done
+fi
+
+
+
 # Aliases
 
 alias back="{ git checkout git rev-list -1 --before=\"$1\" master; };"
@@ -52,6 +60,10 @@ gith() {
 
 gitl() {
   pushd ~/src/gitlab.com/wryfi/$1
+}
+
+gitz () {
+  pushd ~/src/local/$1
 }
 
 hgrep () {
