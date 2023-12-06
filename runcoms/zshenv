@@ -27,9 +27,6 @@ export GPG_TTY=`tty`
 
 export LC_ALL=en_US.UTF-8 
 
-# Medium integration token
-export MEDIUM_INTEGRATION_TOKEN=2988776e849ee662d6cbf694800d0a6e7992238ab6b9734439f55055df8d851f3
-
 export NPM_PACKAGES="${HOME}/.local/opt/npm"
 
 export TFENV_ARCH=arm
@@ -38,3 +35,5 @@ export TFENV_CONFIG_DIR=~/.tfenv
 export VIRTUALENV_DIR="$HOME/.local/share/virtualenvs"
 
 export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"
+
+source ${ZDOTDIR}/secrets/*
