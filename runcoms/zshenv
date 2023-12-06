@@ -1,10 +1,3 @@
-#
-# Defines environment variables.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
-
 # Ensure that a non-login, non-interactive shell has a defined environment.
 if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprofile"
@@ -16,12 +9,16 @@ export L="$HOME/.local"
 #
 # alphabetized variable exports
 #
+export C_INCLUDE_PATH=/opt/local/include
+
 export CHROME_EXECUTABLE=/Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser
 
-# Google Cloud SDK isn't ready for latest python
+# point google cloud sdk to the right python
 export CLOUDSDK_PYTHON=/opt/local/bin/python3.11
 
 export EDITOR=$L/bin/nvim
+
+export HDF5_DIR=/opt/local
 
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk17/Contents/Home
 
@@ -32,6 +29,8 @@ export GPG_AGENT=/Applications/MacPorts/pinentry-mac.app/Contents/MacOS/pinentry
 export GPG_TTY=`tty`
 
 export LC_ALL=en_US.UTF-8 
+
+export LIBRARY_PATH=/opt/local/include
 
 export NPM_PACKAGES="$L/opt/npm"
 
@@ -52,5 +51,5 @@ export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"
 #
 # source additional files for variables
 #
-source ${ZDOTDIR}/secrets/*
+source ${ZDOTDIR}/secrets.d/*
 
