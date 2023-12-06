@@ -10,16 +10,22 @@ if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; t
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
 
+# export L first so that it can be used throughout the configuration
+export L="$HOME/.local"
+
+#
+# alphabetized variable exports
+#
 export CHROME_EXECUTABLE=/Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser
 
 # Google Cloud SDK isn't ready for latest python
 export CLOUDSDK_PYTHON=/opt/local/bin/python3.11
 
-export EDITOR=$HOME/.local/bin/nvim
+export EDITOR=$L/bin/nvim
 
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk17/Contents/Home
 
-export GOPATH="$HOME/.local/var/go"
+export GOPATH="$L/var/go"
 export GOBIN="$GOPATH/bin"
 
 export GPG_AGENT=/Applications/MacPorts/pinentry-mac.app/Contents/MacOS/pinentry-mac
@@ -27,13 +33,24 @@ export GPG_TTY=`tty`
 
 export LC_ALL=en_US.UTF-8 
 
-export NPM_PACKAGES="${HOME}/.local/opt/npm"
+export NPM_PACKAGES="$L/opt/npm"
 
 export TFENV_ARCH=arm
 export TFENV_CONFIG_DIR=~/.tfenv
 
-export VIRTUALENV_DIR="$HOME/.local/share/virtualenvs"
+export VIRTUALENV_DIR="$L/share/virtualenvs"
 
+export ZD=${ZDOTDIR}
+
+
+#
+# expport MANPATH last since it requires other variable definitions, above
+#
 export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"
 
+
+#
+# source additional files for variables
+#
 source ${ZDOTDIR}/secrets/*
+
