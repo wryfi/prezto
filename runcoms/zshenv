@@ -9,3 +9,32 @@
 if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
+
+export CHROME_EXECUTABLE=/Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser
+
+# Google Cloud SDK isn't ready for latest python
+export CLOUDSDK_PYTHON=/opt/local/bin/python3.11
+
+export EDITOR=$HOME/.local/bin/nvim
+
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk17/Contents/Home
+
+export GOPATH="$HOME/.local/var/go"
+export GOBIN="$GOPATH/bin"
+
+export GPG_AGENT=/Applications/MacPorts/pinentry-mac.app/Contents/MacOS/pinentry-mac
+export GPG_TTY=`tty`
+
+export LC_ALL=en_US.UTF-8 
+
+# Medium integration token
+export MEDIUM_INTEGRATION_TOKEN=2988776e849ee662d6cbf694800d0a6e7992238ab6b9734439f55055df8d851f3
+
+export NPM_PACKAGES="${HOME}/.local/opt/npm"
+
+export TFENV_ARCH=arm
+export TFENV_CONFIG_DIR=~/.tfenv
+
+export VIRTUALENV_DIR="$HOME/.local/share/virtualenvs"
+
+export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"
