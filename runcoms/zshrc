@@ -96,11 +96,11 @@ watchmd2pdf() {
   fswatch -o "$infile" -0 | xargs -0 -n1 -I{} pandoc -f markdown -t pdf --pdf-engine=xelatex -o "$outfile" "$infile"
 }
 
-gh() {
+gith() {
   pushd ~/src/github.com/wryfi/$1
 }
 
-gl() {
+gitl() {
   pushd ~/src/gitlab.com/wryfi/$1
 }
 
