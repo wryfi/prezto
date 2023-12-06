@@ -1,16 +1,24 @@
-#
-# Executes commands at the start of an interactive session.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
-
 # Source Prezto.
 if [[ -s "$HOME/src/github.com/wryfi/prezto/init.zsh" ]]; then
   source "$HOME/src/github.com/wryfi/prezto/init.zsh"
 fi
 
+
+# Aliases
+
+alias back="{ git checkout git rev-list -1 --before=\"$1\" master; };"
+alias kl='kubectl'
+alias ls='ls -alh'
+alias nv="nvim"
+alias nv2="$(which nvim)"
+alias nv4="$(which nvim) -u ~/.vimrc_4space"
+alias vim="$(which nvim)"
+
+
 # Functions
+cl () {
+  pushd ~/.local/$1
+}
 
 create_postgres_db() {
   echo "database name: "
@@ -18,56 +26,6 @@ create_postgres_db() {
   echo "database owner: "
   read db_owner
   sudo -u postgres createdb --locale=en_US.UTF-8 -E utf-8 -O $db_owner -T template0 $db_name
-}
-
-ec2() {
-  local profile="$1"
-  local tag="$2"
-  local values="$3"
-  aws ec2 --profile "${profile}" describe-instances --filters "Name=tag:${tag},Values=${values}" \
-    | jq '[.Reservations[] | {instanceId: .Instances[0].InstanceId, ip: .Instances[0].PrivateIpAddress}]'
-}
-
-
-known-host-rm() {
-  [ -n "$1" ] && [[ $1 =~ ^[0-9]+$ ]] && /usr/bin/sed -i '' "${1}d" ~/.ssh/known_hosts
-}
-
-mkvirtualenv () {
-    virtualenv -p python3 ${VIRTUALENV_DIR}/$1
-    echo "created ${VIRTUALENV_DIR}/$1"
-    . ${VIRTUALENV_DIR}/$1/bin/activate
-}
-
-rmvirtualenv () {
-  if [[ $VIRTUAL_ENV = "${VIRTUALENV_DIR}/$1" ]]; then deactivate; fi
-  rm -rf ${VIRTUALENV_DIR}/$1
-}
-
-repo-sync() {
-  rsync -av --exclude=.git --exclude=.gitignore --exclude=.idea $1 $2
-}
-
-workon() {
-    . ${VIRTUALENV_DIR}/$1/bin/activate
-}
-
-deploy_trash() {
-    gcloud functions deploy trash --region=us-central1 --runtime python37 \
-      --trigger-topic trash-schedule \
-      --set-env-vars TRASH__CALENDAR__ID=5csmm981vfhs20d3tpvppi7rf4@group.calendar.google.com,TRASH__HAULERS__CHRIS="+14155185290",TRASH__TWILIO__ACCOUNT_SID=AC96b7112b43374b6daa7ec8344881ff0d,TRASH__HAULERS__JOSH="+12104882613",TRASH__HAULERS__MICHELLE="+14155901570",TRASH__HAULERS__OLGA="+14152039633",TRASH__TWILIO__PHONE_NUMBER="+15108580685" \
-      --service-account trash-account@trash-schedule-1548019657293.iam.gserviceaccount.com
-  }
-
-pdf() {
-  infile="${1}"
-  outfile="${2}"
-  if [[ -z $infile || -z $outfile ]]; then
-    echo "must provide infile and outfile"
-    return 1
-  fi
-  pandoc -f markdown -t pdf --pdf-engine=xelatex -V geometry=margin=1in -V colorlinks -V mainfont=Lato -H  ~/.local/etc/pandoc/customize.tex -o $outfile $infile
-  echo "generated pdf: $outfile"
 }
 
 doc() {
@@ -80,20 +38,12 @@ doc() {
   pandoc -f markdown -t docx --lua-filter=$HOME/.local/etc/pandoc/pagebreak.lua -o $outfile $infile
 }
 
-odt() {
-  infile="${1}"
-  outfile="${2}"
-  if [[ -z $infile || -z $outfile ]]; then
-    echo "must provide infile and outfile"
-    return 1
-  fi
-  pandoc -f markdown -t odt --lua-filter=$HOME/.local/etc/pandoc/pagebreak.lua -o $outfile $infile
-}
-
-watchmd2pdf() {
-  infile="${1}"
-  outfile="${2}"
-  fswatch -o "$infile" -0 | xargs -0 -n1 -I{} pandoc -f markdown -t pdf --pdf-engine=xelatex -o "$outfile" "$infile"
+ec2() {
+  local profile="$1"
+  local tag="$2"
+  local values="$3"
+  aws ec2 --profile "${profile}" describe-instances --filters "Name=tag:${tag},Values=${values}" \
+    | jq '[.Reservations[] | {instanceId: .Instances[0].InstanceId, ip: .Instances[0].PrivateIpAddress}]'
 }
 
 gith() {
@@ -104,18 +54,61 @@ gitl() {
   pushd ~/src/gitlab.com/wryfi/$1
 }
 
-cl () {
-  pushd ~/.local/$1
+hgrep () {
+  fc -Dlim "*$@*" 1
 }
 
-# Aliases
+known-host-rm() {
+  [ -n "$1" ] && [[ $1 =~ ^[0-9]+$ ]] && /usr/bin/sed -i '' "${1}d" ~/.ssh/known_hosts
+}
 
-alias back="{ git checkout git rev-list -1 --before=\"$1\" master; };"
-alias lpf='lpass ls | grep -i'
-alias ls='ls -alh'
-alias v2="$(which nvim)"
-alias v4="$(which nvim) -u ~/.vimrc_4space"
-alias kl='kubectl'
-alias nv="nvim"
-alias vim="$(which nvim)"
+mkvirtualenv () {
+    virtualenv -p python3 ${VIRTUALENV_DIR}/$1
+    echo "created ${VIRTUALENV_DIR}/$1"
+    . ${VIRTUALENV_DIR}/$1/bin/activate
+}
+
+odt() {
+  infile="${1}"
+  outfile="${2}"
+  if [[ -z $infile || -z $outfile ]]; then
+    echo "must provide infile and outfile"
+    return 1
+  fi
+  pandoc -f markdown -t odt --lua-filter=$HOME/.local/etc/pandoc/pagebreak.lua -o $outfile $infile
+}
+
+pdf() {
+  infile="${1}"
+  outfile="${2}"
+  if [[ -z $infile || -z $outfile ]]; then
+    echo "must provide infile and outfile"
+    return 1
+  fi
+  pandoc -f markdown -t pdf --pdf-engine=xelatex -V geometry=margin=1in -V colorlinks -V mainfont=Lato -H  ~/.local/etc/pandoc/customize.tex -o $outfile $infile
+  echo "generated pdf: $outfile"
+}
+
+repo-sync() {
+  rsync -av --exclude=.git --exclude=.gitignore --exclude=.idea $1 $2
+}
+
+rmvirtualenv () {
+  if [[ $VIRTUAL_ENV = "${VIRTUALENV_DIR}/$1" ]]; then deactivate; fi
+  rm -rf ${VIRTUALENV_DIR}/$1
+}
+
+watchpdf() {
+  infile="${1}"
+  outfile="${2}"
+  fswatch -o "$infile" -0 | xargs -0 -n1 -I{} pandoc -f markdown -t pdf --pdf-engine=xelatex -o "$outfile" "$infile"
+}
+
+workon() {
+    . ${VIRTUALENV_DIR}/$1/bin/activate
+}
+
+zv () {
+  nvim $ZDOTDIR/$1
+}
 
