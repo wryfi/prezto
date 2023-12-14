@@ -20,7 +20,11 @@ export EDITOR=$L/bin/nvim
 
 export HDF5_DIR=/opt/local
 
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk17/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk17-temurin/Contents/Home
+
+export GH="$HOME/src/github.com/wryfi"
+export GL="$HOME/src/gitlab.com/wryfi"
+export GZ="$HOME/src/local"
 
 export GOPATH="$L/var/go"
 export GOBIN="$GOPATH/bin"
@@ -33,6 +37,8 @@ export LC_ALL=en_US.UTF-8
 export LIBRARY_PATH=/opt/local/include
 
 export NPM_PACKAGES="$L/opt/npm"
+
+export SRC="$HOME/src"
 
 export TFENV_ARCH=arm
 export TFENV_CONFIG_DIR=~/.tfenv
