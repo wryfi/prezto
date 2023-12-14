@@ -15,8 +15,15 @@ fi
 # Aliases
 
 alias back="{ git checkout git rev-list -1 --before=\"$1\" master; };"
+
+alias grep='rg'
+
 alias kl='kubectl'
-alias ls='ls -alh'
+
+alias ls='lsd'
+alias la='lsd -lAS'
+alias lt3='lsd --tree --depth 3'
+
 alias nv="nvim"
 alias nv2="$(which nvim)"
 alias nv4="$(which nvim) -u ~/.vimrc_4space"
@@ -72,6 +79,10 @@ hgrep () {
 
 known-host-rm() {
   [ -n "$1" ] && [[ $1 =~ ^[0-9]+$ ]] && /usr/bin/sed -i '' "${1}d" ~/.ssh/known_hosts
+}
+
+lt() {
+  lsd --tree --depth $1 $2
 }
 
 mkvirtualenv () {
