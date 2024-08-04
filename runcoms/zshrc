@@ -23,6 +23,8 @@ alias back="{ git checkout git rev-list -1 --before=\"$1\" master; };"
 
 alias kl='kubectl'
 
+unalias ls
+unalias lt
 alias la='lsd -lAS'
 alias lg='lsd -lAS | rg'
 alias ls='lsd'
