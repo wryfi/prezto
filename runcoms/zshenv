@@ -5,6 +5,7 @@ fi
 
 # export L first so that it can be used throughout the configuration
 export L="$HOME/.local"
+export T="$L/tmp"
 
 #
 # alphabetized variable exports
@@ -16,7 +17,8 @@ export CHROME_EXECUTABLE=/Applications/Brave\ Browser.app/Contents/MacOS/Brave\ 
 # point google cloud sdk to the right python
 export CLOUDSDK_PYTHON=/opt/local/bin/python3.11
 
-export EDITOR=$L/bin/nvim
+export EDITOR=/opt/local/bin/nvim
+export VISUAL=$EDITOR
 
 export HDF5_DIR=/opt/local
 
@@ -37,6 +39,8 @@ export LC_ALL=en_US.UTF-8
 export LIBRARY_PATH=/opt/local/include
 
 export NPM_PACKAGES="$L/opt/npm"
+
+export OBVAULT="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/notes"
 
 export SRC="$HOME/src"
 
