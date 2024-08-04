@@ -3,6 +3,9 @@ if [[ -s "$HOME/src/github.com/wryfi/prezto/init.zsh" ]]; then
   source "$HOME/src/github.com/wryfi/prezto/init.zsh"
 fi
 
+fpath=(~/.local/etc/zsh/bin "${fpath[@]}")
+autoload -U compinit && compinit
+
 
 # source additional rc files first so they don't shadow our fns/aliases
 
@@ -16,19 +19,20 @@ fi
 
 alias back="{ git checkout git rev-list -1 --before=\"$1\" master; };"
 
-alias grep='rg'
+#alias grep='rg'
 
 alias kl='kubectl'
 
-alias ls='lsd'
 alias la='lsd -lAS'
-alias lt3='lsd --tree --depth 3'
+alias lg='lsd -lAS | rg'
+alias ls='lsd'
 
 alias nv="nvim"
 alias nv2="$(which nvim)"
 alias nv4="$(which nvim) -u ~/.vimrc_4space"
 alias vim="$(which nvim)"
 
+alias salt-push='git push && ssh admin.fre.wryfi.net "cd /srv/sdm && sudo -E git up"'
 
 # Functions
 cl () {
@@ -82,11 +86,15 @@ known-host-rm() {
 }
 
 lt() {
-  lsd --tree --depth $1 $2
+  lsd --tree --depth $1 ${@:2}
+}
+
+mkcd() {
+  mkdir -p $1 && cd $_
 }
 
 mkvirtualenv () {
-    virtualenv -p python3 ${VIRTUALENV_DIR}/$1
+    python -m venv ${VIRTUALENV_DIR}/$1
     echo "created ${VIRTUALENV_DIR}/$1"
     . ${VIRTUALENV_DIR}/$1/bin/activate
 }
@@ -124,7 +132,8 @@ rmvirtualenv () {
 watchpdf() {
   infile="${1}"
   outfile="${2}"
-  fswatch -o "$infile" -0 | xargs -0 -n1 -I{} pandoc -f markdown -t pdf --pdf-engine=xelatex -o "$outfile" "$infile"
+  fswatch -o "$infile" -0 | xargs -0 -n1 -I{} pandoc -f markdown -t pdf \
+  --pdf-engine=xelatex -H ~/.local/etc/pandoc/customize.tex -o $outfile $infile
 }
 
 workon() {
