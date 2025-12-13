@@ -93,6 +93,21 @@ ec2() {
     | jq '[.Reservations[] | {instanceId: .Instances[0].InstanceId, ip: .Instances[0].PrivateIpAddress}]'
 }
 
+envload() {
+  while IFS='=' read -r key value; do
+    [[ $key =~ ^#.*$ || -z $key ]] && continue
+    printf -v "$key" '%s' "$value" && export "$key"
+  done < ${1:-.env}
+}
+
+envunload() {
+  while IFS='=' read -r key value; do
+    [[ $key =~ ^#.*$ || -z $key ]] && continue
+    unset "$key"
+  done < ${1:-.env}
+  source $ZD/.zshrc
+}
+
 gcd() {
   local dir="$HOME/src"
   if [[ "$1" = "h" ]]; then dir="$dir/github.com/wryfi"; fi
@@ -116,13 +131,6 @@ hgrep () {
 
 known-host-rm() {
   [ -n "$1" ] && [[ $1 =~ ^[0-9]+$ ]] && /usr/bin/sed -i '' "${1}d" ~/.ssh/known_hosts
-}
-
-loadenv() {
-  while IFS='=' read -r key value; do
-    [[ $key =~ ^#.*$ || -z $key ]] && continue
-    printf -v "$key" '%s' "$value" && export "$key"
-  done < ${1:-.env}
 }
 
 ltr() {
