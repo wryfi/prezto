@@ -48,8 +48,8 @@ typeset -gU cdpath fpath mailpath path
 # )
 
 # read paths from paths.d
-if [[ -d "${ZDOTDIR}/paths.d" ]]; then
-  for file in $(find "${ZDOTDIR}/paths.d" -not -type d | sort); do . "$file"; done
+if [[ -e "${ZDOTDIR}/paths.d" ]]; then
+  for file in $(find "${ZDOTDIR}/paths.d/" -not -type d | sort); do . "$file"; done
 fi
 
 #

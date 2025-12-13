@@ -6,6 +6,28 @@ fi
 fpath=(~/.local/etc/zsh/bin "${fpath[@]}")
 autoload -U compinit && compinit
 
+precmd () {print -Pn "\e]0;%~\a"};
+
+
+# define a function to detect aliases or shell functions
+is_alias_or_function() {
+  if [[ -n "$(alias $1 2>/dev/null)" ]]; then
+    echo alias
+  elif [[ "$(function $1 2>/dev/null)" ]]; then
+    echo "$1 is a function"
+  else
+    echo function
+  fi
+}
+
+# unalias ls & lt as needed
+
+for al in {l,la,lc,ll,lk,lm,lr,ls,lt,lu,sl}; do
+  if [[ $(is_alias_or_function $al) = "alias" ]]; then
+    unalias $al
+  fi
+done
+
 
 # source additional rc files first so they don't shadow our fns/aliases
 
@@ -18,18 +40,22 @@ fi
 # Aliases
 
 alias back="{ git checkout git rev-list -1 --before=\"$1\" master; };"
+alias bat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo Nord || echo GitHub)"
 
 #alias grep='rg'
 
 alias kl='kubectl'
 
-unalias ls
-unalias lt
-alias la='lsd -lAS'
-alias lg='lsd -lAS | rg'
-alias ls='lsd'
+alias l='eza --icons=auto --group-directories-first'
+alias ls='l -1'
+alias ll='l -l'
+alias la='l -Al --time-style long-iso -g'
+alias lk='la --sort=size'
+alias lt='la --sort=age --reverse'
+alias lg='lt --git --git-repos'
+alias lrg='la | rg -i'
 
-alias nv="nvim"
+alias nv="$(which nvim)"
 alias nv2="$(which nvim)"
 alias nv4="$(which nvim) -u ~/.vimrc_4space"
 alias vim="$(which nvim)"
@@ -67,16 +93,21 @@ ec2() {
     | jq '[.Reservations[] | {instanceId: .Instances[0].InstanceId, ip: .Instances[0].PrivateIpAddress}]'
 }
 
-gith() {
-  pushd ~/src/github.com/wryfi/$1
-}
-
-gitl() {
-  pushd ~/src/gitlab.com/wryfi/$1
-}
-
-gitz () {
-  pushd ~/src/local/$1
+gcd() {
+  local dir="$HOME/src"
+  if [[ "$1" = "h" ]]; then dir="$dir/github.com/wryfi"; fi
+  if [[ "$1" = "l" ]]; then dir="$dir/gitlab.com/wryfi"; fi
+  if [[ "$1" = "z" ]]; then dir="$dir/local"; fi
+  if [[ "$2" != "" ]]; then
+    if [[ -d "$dir/$2" ]]; then
+      pushd "$dir/$2"
+      return
+    fi
+  elif [[ "$1" =~ '^[hlz]$' ]]; then
+    pushd $(FZF_DEFAULT_COMMAND="fd --type d -d 1 . $dir" fzf)
+    return
+  fi
+  pushd $(FZF_DEFAULT_COMMAND="fd --type d -d 3 . ~/src" fzf)
 }
 
 hgrep () {
@@ -87,8 +118,8 @@ known-host-rm() {
   [ -n "$1" ] && [[ $1 =~ ^[0-9]+$ ]] && /usr/bin/sed -i '' "${1}d" ~/.ssh/known_hosts
 }
 
-lt() {
-  lsd --tree --depth $1 ${@:2}
+ltr() {
+  eza -T -L $1 ${@:2}
 }
 
 mkcd() {
@@ -129,6 +160,14 @@ repo-sync() {
 rmvirtualenv () {
   if [[ $VIRTUAL_ENV = "${VIRTUALENV_DIR}/$1" ]]; then deactivate; fi
   rm -rf ${VIRTUALENV_DIR}/$1
+}
+
+watchcmd() {
+  watched="${1}"
+  shift
+  command=("$@")
+  echo "watching ${watched} with command '${command}' ... "
+  fswatch -0 "${watched}" --event Created --event Updated | xargs -0 -I{} ${command[*]}
 }
 
 watchpdf() {
