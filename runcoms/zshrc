@@ -118,6 +118,13 @@ known-host-rm() {
   [ -n "$1" ] && [[ $1 =~ ^[0-9]+$ ]] && /usr/bin/sed -i '' "${1}d" ~/.ssh/known_hosts
 }
 
+loadenv() {
+  while IFS='=' read -r key value; do
+    [[ $key =~ ^#.*$ || -z $key ]] && continue
+    printf -v "$key" '%s' "$value" && export "$key"
+  done < ${1:-.env}
+}
+
 ltr() {
   eza -T -L ${2:-3} ${@:1}
 }
