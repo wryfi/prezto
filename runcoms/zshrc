@@ -119,7 +119,7 @@ known-host-rm() {
 }
 
 ltr() {
-  eza -T -L $1 ${@:2}
+  eza -T -L ${2:-3} ${@:1}
 }
 
 mkcd() {
